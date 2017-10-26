@@ -1,0 +1,24 @@
+[package]
+
+name = "rust-fractx"
+version = "0.0.1"
+authors = [ "Wojciech Kaczmarek", "Rafał Michalski <royal@yeondir.com>" ]
+
+publish = false
+
+description = "All your base belongs to z2 + c."
+homepage = "https://github.com/royaltm/rust-fractx"
+repository = "https://github.com/royaltm/rust-fractx.git"
+keywords = ["mandelbrot"]
+
+readme = "README.md"
+license-file = "LICENSE"
+
+[[bin]]
+name = "fractx"
+path = "src/main.rs"
+doc = false
+test = false
+
+[dependencies]
+image = "*"
