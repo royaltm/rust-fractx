@@ -40,8 +40,8 @@ impl Fractal {
     }
 
     pub fn at<T>(&self, x : Uint, y : Uint) -> T where T: Pixel + Color + 'static {
-        let inf = iter(self.x0+(x as f64)*self.dx, self.y0+(y as f64)*self.dy);
-        if inf {
+        let i  = iter(self.x0+(x as f64)*self.dx, self.y0+(y as f64)*self.dy);
+        if i >= MAXI {
             Color::black()
         }
         else {
