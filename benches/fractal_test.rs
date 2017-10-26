@@ -2,8 +2,8 @@
 
 extern crate test;
 extern crate image;
-
 extern crate fractx;
+
 use test::Bencher;
 use fractx::fractal::new_fractal;
 use image::{Rgb, Rgba, Luma, LumaA};
