@@ -8,14 +8,14 @@ pub trait Color {
 impl<T: Primitive + 'static> Color for Rgba<T> {
     fn black() -> Rgba<T> {
         Rgba([T::zero(),T::zero(),T::zero(),
-              T::from(T::from(0xff).unwrap()).unwrap()])
+              T::max_value()])
     }
 
     fn white() -> Rgba<T> {
-        Rgba([T::from(0xff).unwrap(),
-              T::from(0xff).unwrap(),
-              T::from(0xff).unwrap(),
-              T::from(0xff).unwrap()])
+        Rgba([T::max_value(),
+              T::max_value(),
+              T::max_value(),
+              T::max_value()])
     }
 }
 
@@ -25,9 +25,9 @@ impl<T: Primitive + 'static> Color for Rgb<T> {
     }
 
     fn white() -> Rgb<T> {
-        Rgb([T::from(0xff).unwrap(),
-             T::from(0xff).unwrap(),
-             T::from(0xff).unwrap()])
+        Rgb([T::max_value(),
+             T::max_value(),
+             T::max_value()])
     }
 }
 
@@ -37,16 +37,16 @@ impl<T: Primitive + 'static> Color for Luma<T> {
     }
 
     fn white() -> Luma<T> {
-        Luma([T::from(0xff).unwrap()])
+        Luma([T::max_value()])
     }
 }
 
 impl<T: Primitive + 'static> Color for LumaA<T> {
     fn black() -> LumaA<T> {
-        LumaA([T::zero(), T::from(0xff).unwrap()])
+        LumaA([T::zero(), T::max_value()])
     }
 
     fn white() -> LumaA<T> {
-        LumaA([T::from(0xff).unwrap(), T::from(0xff).unwrap()])
+        LumaA([T::max_value(), T::max_value()])
     }
 }
