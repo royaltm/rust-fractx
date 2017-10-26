@@ -35,20 +35,29 @@ impl Fractal {
         self.h
     }
 
+    pub fn zcoords(&self, x: u32, y: u32) -> (f64, f64) {
+        (self.x0+(x as f64)*self.dx, self.y0+(y as f64)*self.dy)
+    }
+
+    pub fn at_iter(&self, x: u32, y: u32) -> Uint {
+        let (xc, yc) = self.zcoords(x, y);
+        iter(xc, yc)
+    }
+
     pub fn to_img<T>(&self) -> ImageBuffer<T, Vec<T::Subpixel>> where T: Pixel + Color + 'static {
         ImageBuffer::from_fn(self.width(), self.height(), |x, y| {
-            self.at(x as Uint, y as Uint)
+            self.at(x as u32, y as u32)
         })
     }
 
     pub fn to_img_gray<T>(&self) -> ImageBuffer<T, Vec<T::Subpixel>> where T: Pixel + Color + 'static {
         ImageBuffer::from_fn(self.width(), self.height(), |x, y| {
-            self.at_gray(x as Uint, y as Uint)
+            self.at_gray(x as u32, y as u32)
         })
     }
 
-    pub fn at<T>(&self, x : Uint, y : Uint) -> T where T: Pixel + Color + 'static {
-        let i  = iter(self.x0+(x as f64)*self.dx, self.y0+(y as f64)*self.dy);
+    pub fn at<T>(&self, x: u32, y: u32) -> T where T: Pixel + Color + 'static {
+        let i = self.at_iter(x, y);
         if i >= MAXI {
             Color::black()
         }
@@ -58,8 +67,8 @@ impl Fractal {
 
     }
 
-    pub fn at_gray<T>(&self, x : Uint, y : Uint) -> T where T: Pixel + Color + 'static {
-        let i  = iter(self.x0+(x as f64)*self.dx, self.y0+(y as f64)*self.dy);
+    pub fn at_gray<T>(&self, x : u32, y : u32) -> T where T: Pixel + Color + 'static {
+        let i = self.at_iter(x, y);
         Color::gray(1.0 - i as f64 / MAXIF)
     }
 }
