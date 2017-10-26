@@ -1,6 +1,6 @@
 [package]
 
-name = "rust-fractx"
+name = "fractx"
 version = "0.0.1"
 authors = [ "Wojciech Kaczmarek", "Rafał Michalski <royal@yeondir.com>" ]
 
@@ -19,6 +19,10 @@ name = "fractx"
 path = "src/main.rs"
 doc = false
 test = false
+
+[lib]
+doc = false
+test = true
 
 [dependencies]
 image = "*"
