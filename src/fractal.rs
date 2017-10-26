@@ -1,5 +1,3 @@
-#![allow(trivial_casts)]
-
 use iter::iter;
 use image::{ImageBuffer, Pixel};
 
