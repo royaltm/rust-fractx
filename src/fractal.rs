@@ -16,7 +16,7 @@ pub struct Fractal {
     dy : f64,
 }
 
-pub fn new_fractal(w: Uint, h: Uint, x0: f64, y0: f64, x1: f64, y1: f64) -> Fractal {
+pub fn new_fractal(w: u32, h: u32, x0: f64, y0: f64, x1: f64, y1: f64) -> Fractal {
     Fractal {
         w, h,
         x0, y0,
