@@ -26,3 +26,4 @@ test = true
 
 [dependencies]
 image = "*"
+num = "*"
