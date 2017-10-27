@@ -33,18 +33,17 @@ pub fn iter(x0: f64, y0: f64) -> Uint {
 
     unsafe {
         asm!("
-    movupd  xmm4, xmm0
-    movupd  xmm5, xmm1
+    movsd   xmm4, xmm0
+    movsd   xmm5, xmm1
     mov     cx, ax
     jmp     2f
-
 1:
-    movupd  xmm2, xmm0
-    movupd  xmm3, xmm1
+    movsd   xmm2, xmm0
+    movsd   xmm3, xmm1
 
     mulsd   xmm0, xmm0
     mulsd   xmm3, xmm3
-    movupd  xmm6, xmm3
+    movsd   xmm6, xmm3
     addsd   xmm6, xmm0
     ucomisd xmm6, xmm7
     jae     3f
