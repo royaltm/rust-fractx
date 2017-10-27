@@ -1,3 +1,5 @@
+#![feature(asm)]
+
 extern crate image;
 extern crate num;
 

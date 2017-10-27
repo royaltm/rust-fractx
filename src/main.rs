@@ -1,3 +1,4 @@
+#![feature(asm)]
 extern crate image;
 extern crate num;
 extern crate num_cpus;
@@ -13,7 +14,6 @@ mod multi;
 
 pub type Uint = u32;
 
-use std::path::Path;
 use image::{save_buffer, Gray};
 use multi::Multi;
 
@@ -28,7 +28,7 @@ fn main() {
         (@arg MONO: -m --mono "black and white, no greyscales")
     ).get_matches();
 
-    let filename = &Path::new(opts.value_of("FILE").unwrap_or("mandelbrot.png"));
+    let filename = opts.value_of("FILE").unwrap_or("mandelbrot.png");
     let width    = value_t!(opts, "WIDTH", u32).unwrap_or(700);
     let height   = value_t!(opts, "HEIGHT", u32).unwrap_or(400);
     let threads  = value_t!(opts, "THREADS", u32).unwrap_or_else(|_| num_cpus::get() as u32);
