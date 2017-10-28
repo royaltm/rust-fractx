@@ -17,68 +17,52 @@ pub fn iter(x0: f64, y0: f64) -> Uint {
     MAXI
 }
 
-// regs:
-// X0L - x, xx
-// X1L - y
-// X2L - backup x
-// X3L - yy
-// X4L - const x0
-// X5L - const y0
-// X6L - backup acc
-// X7L - const pbound = 4
-
 #[cfg(any(target_arch = "x86_64"))]
 pub fn iter(x0: f64, y0: f64) -> Uint {
-    let i: Uint;
+    let numiter: Uint;
 
     unsafe {
         asm!("
-    movsd   xmm4, xmm0
-    movsd   xmm5, xmm1
-    mov     cx, ax
-    jmp     2f
+                           //       [  HI:LO  ]
+                           // xmm4: [   _, 4.0]
+                           // xmm0: [   _,  x0]
+                           // xmm1: [   _,  y0]
+    mov      ax, cx
+    unpcklpd xmm0, xmm1    // xmm0: [  y0,  x0]
+    movapd   xmm1, xmm0    // xmm1: [   y,   x]
+    jmp      2f
 1:
-    movsd   xmm2, xmm0
-    movsd   xmm3, xmm1
-
-    mulsd   xmm0, xmm0
-    mulsd   xmm3, xmm3
-    movsd   xmm6, xmm3
-    addsd   xmm6, xmm0
-    ucomisd xmm6, xmm7
-    jae     3f
-
-    subsd   xmm0, xmm3
-    addsd   xmm0, xmm4
-
-    mulsd   xmm1, xmm2
-    addsd   xmm1, xmm1
-    addsd   xmm1, xmm5
+    movsd    xmm2, xmm1    // xmm2: [   _,    x]
+    unpcklpd xmm2, xmm1    // xmm2: [   x,    x]
+    mulpd    xmm2, xmm1    // xmm2: [ x*y,  x*x]
+    unpckhpd xmm1, xmm2    // xmm1: [ x*y,    y]
+    mulsd    xmm1, xmm1    // xmm1: [ x*y,  y*y]
+    movsd    xmm3, xmm1    // xmm3: [   _,  y*y]
+    addpd    xmm1, xmm2    // xmm1: [2xy ,yy+xx]
+    ucomisd  xmm1, xmm4    // compare yy + xx > 4.0
+    jae      3f
+    subsd    xmm2, xmm3    // xmm2: [   _, xx-yy]
+    movsd    xmm1, xmm2    // xmm1: [ 2xy, xx-yy]
+    addpd    xmm1, xmm0    // xmm1: [2xy+y0,xx-yy+x0]
 2:
     dec     cx
     jnz     1b
 3:
     sub     ax, cx
 "
-    : "={ax}"(i)    // output
+    : "={ax}"(numiter) // output
 
-    : "{xmm0}"(x0), // input
+    : "{xmm0}"(x0),    // input
       "{xmm1}"(y0),
-      "{xmm7}"(4.0),
-      "{ax}"(MAXI)
+      "{xmm4}"(4.0),
+      "{cx}"(MAXI)
 
-    : "cc",         // clobber
-      "cx",
+    : "cc",            // clobber
       "xmm2",
-      "xmm3",
-      "xmm4",
-      "xmm5",
-      "xmm6"
+      "xmm3"
 
-    : "volatile",   // flags
-      "alignstack",
-      "intel")
+    : "intel")         // flags
     }
 
-    i
+    numiter
 }
