@@ -46,7 +46,7 @@ default-features = false
 features = ["image-buffer", "parallel"]
 ```
 
-Basic example using `Vec` for pixel array:
+Basic example using `Vec` for an array of pixels:
 
 ```rust
 extern crate fractx;
@@ -64,11 +64,11 @@ fn main() {
   /* draw grayscale fractal pixels using the same buffer */
   Buffer::<u8>::write_img_buffer(&frac, 200, false, &mut pixels);
 
-  /* draw grayscale fractal pixels into separately created buffer */
+  /* create rgba pixel buffer using Fractal struct as a guide */
   let pixels_rgba = Buffer::<u32>::create_img_buffer(&frac);
 
   /* draw grayscale rgba fractal pixels into separately created buffer */
-  Buffer::<u8>::write_img_buffer(&frac, 200, false, &mut pixels_rgba);
+  Buffer::<u32>::write_img_buffer(&frac, 200, false, &mut pixels_rgba);
 }
 ```
 
