@@ -1,5 +1,5 @@
-use image::*;
-use num::traits;
+use image::{Primitive, Rgba, Rgb, Luma, LumaA};
+use num_traits::cast::AsPrimitive;
 
 pub trait Color {
     fn black() -> Self;
@@ -8,7 +8,7 @@ pub trait Color {
 }
 
 impl<T: Primitive + 'static> Color for Rgba<T>
-    where f64: From<T>
+    where f64: From<T> + AsPrimitive<T>
 {
     fn black() -> Rgba<T> {
         Rgba([T::zero(),T::zero(),T::zero(),
@@ -23,13 +23,13 @@ impl<T: Primitive + 'static> Color for Rgba<T>
     }
 
     fn gray(value: f64) -> Rgba<T> {
-        let n = traits::cast(value * f64::from(T::max_value())).unwrap();
+        let n: T = (value * f64::from(T::max_value())).as_();
         Rgba([n,n,n, T::max_value()])
     }
 }
 
 impl<T: Primitive + 'static> Color for Rgb<T>
-    where f64: From<T>
+    where f64: From<T> + AsPrimitive<T>
 {
     fn black() -> Rgb<T> {
         Rgb([T::zero(),T::zero(),T::zero()])
@@ -42,13 +42,13 @@ impl<T: Primitive + 'static> Color for Rgb<T>
     }
 
     fn gray(value: f64) -> Rgb<T> {
-        let n = traits::cast(value * f64::from(T::max_value())).unwrap();
+        let n = (value * f64::from(T::max_value())).as_();
         Rgb([n,n,n])
     }
 }
 
 impl<T: Primitive + 'static> Color for Luma<T>
-    where f64: From<T>
+    where f64: From<T> + AsPrimitive<T>
 {
     fn black() -> Luma<T> {
         Luma([T::zero()])
@@ -59,13 +59,13 @@ impl<T: Primitive + 'static> Color for Luma<T>
     }
 
     fn gray(value: f64) -> Luma<T> {
-        let n = traits::cast(value * f64::from(T::max_value())).unwrap();
+        let n = (value * f64::from(T::max_value())).as_();
         Luma([n])
     }
 }
 
 impl<T: Primitive + 'static> Color for LumaA<T>
-    where f64: From<T>
+    where f64: From<T> + AsPrimitive<T>
 {
     fn black() -> LumaA<T> {
         LumaA([T::zero(), T::max_value()])
@@ -76,7 +76,7 @@ impl<T: Primitive + 'static> Color for LumaA<T>
     }
 
     fn gray(value: f64) -> LumaA<T> {
-        let n = traits::cast(value * f64::from(T::max_value())).unwrap();
+        let n = (value * f64::from(T::max_value())).as_();
         LumaA([n, T::max_value()])
     }
 }
