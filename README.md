@@ -10,7 +10,9 @@ Install
 -------
 
 ```
-cargo +nightly install fractx
+git clone https://github.com/royaltm/rust-fractx.git
+cd rust-fractx
+cargo install --path .
 ```
 
 
