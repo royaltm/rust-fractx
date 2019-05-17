@@ -31,9 +31,9 @@ parallel = ["num_cpus", "scoped_threadpool"]
 binaries = ["parallel", "image-buffer", "clap"]
 
 [dependencies]
-clap = { version = "^2.30", optional = true }
-image = { version = "0.18", optional = true }
-num_cpus = { version = "^1.8", optional = true }
+clap = { version = "^2.33", optional = true }
+image = { version = "0.21", optional = true }
+num_cpus = { version = "^1.10", optional = true }
 scoped_threadpool = { version = "0.1", optional = true }
 
 [dependencies.num-traits]
