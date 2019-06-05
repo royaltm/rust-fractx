@@ -43,7 +43,7 @@ impl FromStr for PixelType {
     }
 }
 
-fn run() -> Result<(), Box<Error>> {
+fn run() -> Result<(), Box<dyn Error>> {
     let opts = clap_app!((env!("CARGO_PKG_NAME")) =>
         (version: crate_version!())
         (author: crate_authors!())
