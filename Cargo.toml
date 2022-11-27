@@ -1,6 +1,6 @@
 [package]
 name = "fractx"
-version = "0.2.2"
+version = "0.3.0"
 authors = [ "Wojciech Kaczmarek", "Rafał Michalski <royal@yeondir.com>" ]
 edition = "2018"
 
