@@ -2,8 +2,8 @@ use image::{ImageBuffer, Pixel};
 
 use super::Uint;
 
-use color::Color;
-use fractal::Fractal;
+use crate::color::Color;
+use crate::fractal::Fractal;
 
 pub trait FractalImage<T: Pixel> {
     fn to_img_mono(&self, iters: Uint) -> ImageBuffer<T, Vec<T::Subpixel>>;

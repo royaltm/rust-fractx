@@ -1,11 +1,3 @@
-extern crate num_traits;
-extern crate image;
-extern crate num_cpus;
-extern crate scoped_threadpool;
-
-#[macro_use(value_t, clap_app, crate_version, crate_authors)]
-extern crate clap;
-
 mod color;
 mod iter;
 mod fractal;
@@ -13,18 +5,63 @@ mod img;
 mod buffer;
 mod parallel;
 
+use clap::Parser;
+use std::fmt;
+
 pub type Uint = u32;
 
+#[derive(Parser)]
+#[command(author, version, about, long_about = None, disable_help_flag = true)]
+struct Args {
+   /// Output file name
+   #[arg(short, long, value_name = "FILE", default_value_t = String::from("mandelbrot.png"))]
+   output: String,
+   /// Pixels width
+   #[arg(short, long, default_value_t = 700)]
+   width: u32,
+   /// Pixels height
+   #[arg(short, long, default_value_t = 400)]
+   height: u32,
+   /// Number of iterations
+   #[arg(short, long, default_value_t = num_cpus::get() as u32)]
+   threads: u32,
+   /// Number of iterations
+   #[arg(short, long, default_value_t = 200)]
+   iters: Uint,
+   /// No greyscales
+   #[arg(short, long, default_value_t = false)]
+   mono: bool,
+   /// Pixel type: gray|rgba
+   #[arg(short, long, default_value_t = PixelType::Gray)]
+   pixel: PixelType,
+   /// Coords: x0,y0,x1,y1
+   #[arg(short, long)]
+   coords: Option<String>,
+   /// Print help information
+   #[arg(short = '?', long, action = clap::ArgAction::Help)]
+   help: Option<bool>
+}
+
 use std::error::Error;
-use std::path::Path;
+
 use img::FractalImage;
-use image::{save_buffer, Gray, RGBA};
+use image::{save_buffer, ColorType};
 use parallel::Parallel;
 
 use std::str::FromStr;
 
+#[derive(Clone)]
 enum PixelType {
     Gray, Rgba
+}
+
+impl fmt::Display for PixelType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", match self {
+            PixelType::Gray => "gray",
+            PixelType::Rgba => "rgba",
+        })
+    }
 }
 
 impl FromStr for PixelType {
@@ -44,33 +81,22 @@ impl FromStr for PixelType {
 }
 
 fn run() -> Result<(), Box<dyn Error>> {
-    let opts = clap_app!((env!("CARGO_PKG_NAME")) =>
-        (version: crate_version!())
-        (author: crate_authors!())
-        (about: env!("CARGO_PKG_DESCRIPTION"))
-        (@arg FILE: -o --output +takes_value "output file name")
-        (@arg WIDTH: -w --width +takes_value "pixels width")
-        (@arg HEIGHT: -h --height +takes_value "pixels height")
-        (@arg THREADS: -t --threads +takes_value "number of threads")
-        (@arg ITERS: -i --iters +takes_value "number of iterations")
-        (@arg MONO: -m --mono "black and white, no greyscales")
-        (@arg PIXEL: -p --pixel +takes_value "pixel type: gray|rgba")
-        (@arg COORDS: -c --coords +takes_value "x0,y0,x1,y1")
-    ).get_matches();
+    let args = Args::parse();
 
-    let filename = &Path::new(opts.value_of("FILE").unwrap_or("mandelbrot.png"));
-    let pixel    = opts.value_of("PIXEL").unwrap_or("gray");
-    let pixel    = PixelType::from_str(pixel)?;
-    let width    = value_t!(opts, "WIDTH", u32).unwrap_or(700);
-    let height   = value_t!(opts, "HEIGHT", u32).unwrap_or(400);
-    let threads  = value_t!(opts, "THREADS", u32).unwrap_or_else(|_| num_cpus::get() as u32);
-    let iters    = value_t!(opts, "ITERS", Uint).unwrap_or_else(|_| 200 as Uint);
-    let mono     = opts.is_present("MONO");
+    let filename = args.output;
+    let pixel    = args.pixel;
+    // let pixel    = PixelType::from_str(pixel)?;
+    let width    = args.width;
+    let height   = args.height;
+    // let threads  = value_t!(opts, "THREADS", u32).unwrap_or_else(|_| num_cpus::get() as u32);
+    let threads  = args.threads;
+    let iters    = args.iters;
+    let mono     = args.mono;
     let mut x0: f64 = -2.5;
     let mut y0: f64 = -1.0;
     let mut x1: f64 = 1.0;
     let mut y1: f64 = 1.0;
-    if let Some(coords) = opts.value_of("COORDS") {
+    if let Some(coords) = args.coords {
         let mut coords = coords.split(',').map(|v| f64::from_str(v));
         if let Some(v) = coords.next() { x0 = v? }
         if let Some(v) = coords.next() { y0 = v? }
@@ -105,11 +131,11 @@ fn run() -> Result<(), Box<dyn Error>> {
             match pixel {
                 PixelType::Rgba => {
                     let ref buffer = vec_u32_as_vec_u8(Parallel::<u32>::to_img_buffer(&img, iters, mono, threads));
-                    save_buffer(filename, buffer, img.width(), img.height(), RGBA(8))?;
+                    save_buffer(filename, buffer, img.width(), img.height(), ColorType::Rgba8)?;
                 },
                 PixelType::Gray => {
                     let ref buffer = Parallel::<u8>::to_img_buffer(&img, iters, mono, threads);
-                    save_buffer(filename, buffer, img.width(), img.height(), Gray(8))?;
+                    save_buffer(filename, buffer, img.width(), img.height(), ColorType::L8)?;
                 }
             }
         }

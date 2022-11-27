@@ -1,10 +1,14 @@
+use crate::buffer::ExpandPixel;
+use crate::buffer::Buffer;
+use crate::buffer::mono_pixel;
+use crate::buffer::gray_pixel;
+use crate::buffer::write_line;
 use scoped_threadpool;
 use num_traits::cast::AsPrimitive;
 
 use super::Uint;
 
-use fractal::Fractal;
-use buffer::*;
+use crate::fractal::Fractal;
 
 pub trait Parallel<T: ExpandPixel>: Buffer<T> {
     fn to_img_buffer(&self, iters: Uint, mono: bool, concurrency: u32) -> Vec<T>;

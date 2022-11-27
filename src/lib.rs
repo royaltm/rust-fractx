@@ -1,5 +1,3 @@
-extern crate num_traits;
-
 #[cfg(feature = "image-buffer")]
 extern crate image;
 

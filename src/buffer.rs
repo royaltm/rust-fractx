@@ -2,7 +2,7 @@ use super::Uint;
 
 use num_traits::cast::AsPrimitive;
 use num_traits::int::PrimInt;
-use fractal::Fractal;
+use crate::fractal::Fractal;
 
 const ALPHA_MAX: u32 = 0xff << 24;
 
